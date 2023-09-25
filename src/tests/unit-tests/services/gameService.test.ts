@@ -25,6 +25,6 @@ describe("GameService", () => {
     const result = gameService.playFirstMove(io);
     const winner = gameService.playGame(io, result);
 
-    expect(winner).toBe("player1" || "player2");
+    expect(["player1", "player2"]).toContain(winner);
   });
 });
