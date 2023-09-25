@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h1>Game of Three</h1>
+
+    <button id="automaticGameBtn" onclick="automaticBtnHandler()">
+      Start Automatic Game
+    </button>
+
+    <button id="manualGameBtn" onclick="manualBtnHandler()">
+      Start Manual Game
+    </button>
+
+    <div>
+      <label for="from">Enter number:</label>
+      <input
+        id="number"
+        disabled="true"
+        placeholder="Your number here..."
+        type="text"
+      />
+    </div>
+
+    <button id="send" disabled="true">Send</button>
+    <input
+      type="hidden"
+      disabled="true"
+      id="resultingNumber"
+      name="resultingNumber"
+    />
+
+    <div id="game">
+      <h3>Game Moves</h3>
+      <table id="game-moves">
+        <tbody id="moves"></tbody>
+      </table>
+    </div>
+
+    <p id="result"></p>
+
+    <script type="text/javascript">
+      let socket;
+      let isConnected = false;
+      const VALID_ADDED_VALUES = [1, 0, -1];
+
+      const connect = (mode) => {
+        isConnected = true;
+        return io("http://localhost:4000", { query: "mode=" + mode });
+      };
+
+      const startAutomaticGame = (socket) => {
+        if (!isConnected) {
+          socket = connect("automatic");
+        }
+
+        handler(socket);
+        disableManualInputs();
+
+        document.getElementById("moves").innerHTML = "";
+        document.getElementById("result").innerText = "";
+      };
+
+      const startManualGame = (socket) => {
+        if (!isConnected) {
+          socket = connect("manual");
+        }
+
+        handler(socket);
+
+        const manualMoveElement = document.getElementById("send");
+        manualMoveElement.addEventListener("click", () =>
+          manualInputBtnHandler(socket)
+        );
+        disableManualInputs();
+
+        document.getElementById("moves").innerHTML = "";
+        document.getElementById("result").innerText = "";
+      };
+
+      const handler = (socket) => {
+        socket.on("game_busy", (message) => {
+          alert(message);
+        });
+
+        socket.on("firstMove", (data) => {
+          document.getElementById("resultingNumber").value = data;
+          document.getElementById("moves").innerHTML =
+            "<tr><td>" + data + "</td><td></td><td></td><td></td><td>";
+        });
+
+        socket.on("move", (data) => {
+          document.getElementById("resultingNumber").value =
+            data.resultingNumber;
+
+          const result = document.getElementById("moves").innerHTML;
+
+          document.getElementById("moves").innerHTML =
+            result +
+            "<tr><td>( " +
+            data.givenNumber +
+            "</td><td>+</td><td>" +
+            data.added +
+            " ) / 3</td><td>=</td><td>" +
+            data.resultingNumber +
+            "</td></tr";
+        });
+
+        socket.on("result", (data) => {
+          const result =
+            socket.id === data
+              ? "You are the winner"
+              : "Game is over. You lost.";
+          document.getElementById("result").innerText = result;
+          socket.disconnect();
+          isConnected = false;
+          enabledBtnsToPlayAgain();
+        });
+
+        socket.on("run_manual_move", (socketId) => {
+          if (socket.id == socketId) {
+            enableManualInputs();
+          }
+        });
+
+        socket.on("wait_for_other_user_join", (message) => {
+          alert(message);
+        });
+
+        socket.on("error", (message) => {
+          alert(message);
+        });
+      };
+
+      const automaticBtnHandler = () => {
+        document.getElementById("manualGameBtn").disabled = true;
+        document.getElementById("automaticGameBtn").disabled = true;
+        startAutomaticGame();
+      };
+
+      const manualBtnHandler = () => {
+        document.getElementById("manualGameBtn").disabled = true;
+        document.getElementById("automaticGameBtn").disabled = true;
+        startManualGame();
+      };
+
+      const isValidInput = (givenNumber, moveValue) => {
+        return (
+          VALID_ADDED_VALUES.includes(moveValue) &&
+          (givenNumber + moveValue) % 3 === 0
+        );
+      };
+
+      const enabledBtnsToPlayAgain = () => {
+        document.getElementById("automaticGameBtn").disabled = false;
+        document.getElementById("manualGameBtn").disabled = false;
+
+        disableManualInputs();
+      };
+
+      const disableManualInputs = () => {
+        document.getElementById("number").disabled = true;
+        document.getElementById("send").disabled = true;
+      };
+
+      const enableManualInputs = () => {
+        document.getElementById("number").disabled = false;
+        document.getElementById("send").disabled = false;
+      };
+
+      const manualInputBtnHandler = (socket) => {
+        const moveValue = Number(document.getElementById("number").value);
+        const givenNumber = Number(
+          document.getElementById("resultingNumber").value
+        );
+
+        if (isValidInput(givenNumber, moveValue)) {
+          console.log("socket", socket.id);
+          socket.emit("manualMove", {
+            givenNumber: Number(
+              document.getElementById("resultingNumber").value
+            ),
+            move: Number(document.getElementById("number").value),
+          });
+          disableManualInputs();
+        } else {
+          alert(
+            "Legal values are: 1, 0, -1 and resulting number should be divisible by 3"
+          );
+        }
+      };
+    </script>
+  </body>
+</html>
