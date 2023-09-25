@@ -43,3 +43,19 @@ Communication between players and the server is facilitated using Socket.io, ena
 # Testing
 
 We've implemented test cases using the Jest testing framework to ensure the reliability of our code. You can run the tests with the following command:
+
+```
+npm test
+```
+
+# Technology Stack
+
+The project is built with the following technologies and methodologies:
+
+- Node.js: For server-side development.
+- TypeScript: For statically typed JavaScript.
+- Domain-Driven Development (DDD): A software development approach that focuses on the problem domain.
+- Test-Driven Development (TDD): Writing tests before implementing the code.
+- Jest Framework: Used for writing and running test cases.
+
+Feel free to explore the code and enjoy playing the "Game of Three"!
