@@ -32,7 +32,6 @@ export class GameService {
     }
 
     if (this.game.isGameOver()) {
-      // return this.game.gameWinner();
       const winner = this.game.gameWinner();
       if (winner) {
         io.emit(SocketEvent.RESULT, winner);

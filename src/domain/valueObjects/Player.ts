@@ -29,7 +29,7 @@ export class Player {
 
   public firstMove(): number {
     const max = 1000;
-    const min = 1;
+    const min = 2;
 
     this.number = generateRandomNumber(min, max);
     return this.number;
@@ -70,9 +70,6 @@ export class Player {
   }
 
   public updateGameMode(mode: string) {
-    if (mode != "automatic" && mode != "manual") {
-      throw new Error();
-    }
     this.mode = mode;
   }
 

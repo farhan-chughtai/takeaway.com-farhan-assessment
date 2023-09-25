@@ -1,5 +1,6 @@
 import { MoveDto } from "../dtos/MoveDto";
 import { Player } from "../valueObjects/Player";
+import { NotFoundError } from "./errors/NotFoundError";
 
 export class Game {
   private player1: Player;
@@ -68,7 +69,7 @@ export class Game {
   public updatePlayerGameMode(mode: string, socketId: string): void {
     const player = this.getPlayerBySocketId(socketId);
     if (!player) {
-      throw new Error("Not found");
+      throw new NotFoundError("Player not found!");
     }
     player.updateGameMode(mode);
   }
