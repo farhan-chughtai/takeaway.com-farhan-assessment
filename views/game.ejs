@@ -5,15 +5,16 @@
   </head>
   <body>
     <h1>Game of Three</h1>
+    <label for="gameMode">Game Mode:</label>
 
-    <button id="automaticGameBtn" onclick="automaticBtnHandler()">
-      Start Automatic Game
-    </button>
+    <select name="gameMode" id="gameMode">
+      <option value="automatic">Automatic</option>
+      <option value="manual">Manual</option>
+    </select>
 
-    <button id="manualGameBtn" onclick="manualBtnHandler()">
-      Start Manual Game
-    </button>
+    <button id="gameBtn" onclick="gameBtnHandler()">Start Game</button>
 
+    <p>*Note: You can switch the game mode during the play.</p>
     <div>
       <label for="from">Enter number:</label>
       <input
@@ -51,29 +52,24 @@
         return io("http://localhost:4000", { query: "mode=" + mode });
       };
 
-      const startAutomaticGame = (socket) => {
+      const startGame = (gameMode) => {
         if (!isConnected) {
-          socket = connect("automatic");
+          socket = connect(gameMode);
         }
 
         handler(socket);
-        disableManualInputs();
-
-        document.getElementById("moves").innerHTML = "";
-        document.getElementById("result").innerText = "";
-      };
-
-      const startManualGame = (socket) => {
-        if (!isConnected) {
-          socket = connect("manual");
+        if (gameMode === "manual") {
+          const manualMoveElement = document.getElementById("send");
+          manualMoveElement.addEventListener("click", () =>
+            manualInputBtnHandler(socket)
+          );
         }
+        const gameModeElement = document.getElementById("gameMode");
 
-        handler(socket);
+        gameModeElement.addEventListener("change", () => {
+          gameModeChangeHandler(socket);
+        });
 
-        const manualMoveElement = document.getElementById("send");
-        manualMoveElement.addEventListener("click", () =>
-          manualInputBtnHandler(socket)
-        );
         disableManualInputs();
 
         document.getElementById("moves").innerHTML = "";
@@ -132,18 +128,17 @@
         socket.on("error", (message) => {
           alert(message);
         });
+
+        socket.on("player_left", (message) => {
+          alert(message);
+          gameAbort();
+        });
       };
 
-      const automaticBtnHandler = () => {
-        document.getElementById("manualGameBtn").disabled = true;
-        document.getElementById("automaticGameBtn").disabled = true;
-        startAutomaticGame();
-      };
-
-      const manualBtnHandler = () => {
-        document.getElementById("manualGameBtn").disabled = true;
-        document.getElementById("automaticGameBtn").disabled = true;
-        startManualGame();
+      const gameBtnHandler = () => {
+        const gameModeValue = document.getElementById("gameMode").value;
+        document.getElementById("gameBtn").disabled = true;
+        startGame(gameModeValue);
       };
 
       const isValidInput = (givenNumber, moveValue) => {
@@ -154,8 +149,7 @@
       };
 
       const enabledBtnsToPlayAgain = () => {
-        document.getElementById("automaticGameBtn").disabled = false;
-        document.getElementById("manualGameBtn").disabled = false;
+        document.getElementById("gameBtn").disabled = false;
 
         disableManualInputs();
       };
@@ -168,6 +162,18 @@
       const enableManualInputs = () => {
         document.getElementById("number").disabled = false;
         document.getElementById("send").disabled = false;
+      };
+
+      const gameModeChangeHandler = (socket) => {
+        const gameModeValue = document.getElementById("gameMode").value;
+
+        if (gameModeValue === "automatic") {
+          disableManualInputs();
+        }
+        socket.emit("change_mode", {
+          mode: gameModeValue,
+          socketId: socket.id,
+        });
       };
 
       const manualInputBtnHandler = (socket) => {
@@ -190,6 +196,10 @@
             "Legal values are: 1, 0, -1 and resulting number should be divisible by 3"
           );
         }
+      };
+
+      const gameAbort = () => {
+        window.location = window.location;
       };
     </script>
   </body>

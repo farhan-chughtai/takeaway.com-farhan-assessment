@@ -3,7 +3,6 @@ import { GameService } from "../domain/services/GameService";
 import { Player } from "../repositories/Player";
 import { Player as PlayerObj } from "../domain/valueObjects/Player";
 import { SocketEvent } from "../Enums/SocketEventEnums";
-import { ManualMoveDto } from "../domain/dtos/ManualMoveDto";
 
 class GameSocket {
   private io: Server;
@@ -24,6 +23,7 @@ class GameSocket {
         this.handlePlayerLogic(socket);
         this.handleGameServiceLogic(socket);
         this.handlePlayManualLogic(socket);
+        this.handleChangeModeLogic(socket);
         this.handleDisconnectLogic(socket);
       } catch (error) {
         socket.emit(SocketEvent.ERROR, error);
@@ -78,9 +78,29 @@ class GameSocket {
     });
   }
 
+  private handleChangeModeLogic(socket: Socket) {
+    socket.on(SocketEvent.CHANGE_MODE_REQUEST, (modeInfo) => {
+      try {
+        this.gameService &&
+          this.gameService.changePlayerGameMode(
+            modeInfo.mode,
+            modeInfo.socketId,
+            this.io
+          );
+      } catch (error: any) {
+        socket.emit(SocketEvent.ERROR, error.name);
+      }
+    });
+  }
+
   private handleDisconnectLogic(socket: Socket) {
     socket.on(SocketEvent.DISCONNECT, () => {
       this.playerRepo.removePlayerBySocketId(socket.id);
+
+      socket.broadcast.emit(
+        SocketEvent.PLAYER_LEFT,
+        "The game is over, because the other player left."
+      );
     });
   }
 }

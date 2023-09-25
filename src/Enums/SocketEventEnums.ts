@@ -10,4 +10,6 @@ export enum SocketEvent {
   MOVE = "move",
   RUN_MANUAL_MOVE = "run_manual_move",
   RUN_AUTOMATIC_MOVE = "run_automatic_move",
+  CHANGE_MODE_REQUEST = "change_mode",
+  PLAYER_LEFT = "player_left",
 }

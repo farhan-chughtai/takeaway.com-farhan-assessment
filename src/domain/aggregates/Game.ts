@@ -16,6 +16,10 @@ export class Game {
     return this.curentPlayer;
   }
 
+  public getOtherPlayer(): Player {
+    return this.curentPlayer === this.player1 ? this.player2 : this.player1;
+  }
+
   public getPlayerBySocketId(socketId: string): Player | null {
     return this.player1.getSocketId() === socketId
       ? this.player1
@@ -57,8 +61,16 @@ export class Game {
     return this.player1.getNumber() === 1
       ? this.player1.getSocketId()
       : this.player2.getNumber() === 1
-      ? this.player1.getSocketId()
+      ? this.player2.getSocketId()
       : null;
+  }
+
+  public updatePlayerGameMode(mode: string, socketId: string): void {
+    const player = this.getPlayerBySocketId(socketId);
+    if (!player) {
+      throw new Error("Not found");
+    }
+    player.updateGameMode(mode);
   }
 
   private setNextTurn() {

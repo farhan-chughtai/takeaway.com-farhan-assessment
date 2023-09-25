@@ -32,6 +32,11 @@ export class GameService {
     }
 
     if (this.game.isGameOver()) {
+      // return this.game.gameWinner();
+      const winner = this.game.gameWinner();
+      if (winner) {
+        io.emit(SocketEvent.RESULT, winner);
+      }
       return this.game.gameWinner();
     } else if (this.isManualMove(this.game.getCurrentPlayer())) {
       io.emit(
@@ -49,9 +54,27 @@ export class GameService {
   ): void {
     const moveResult = this.game.playManualMove(resultingNumber, manualMove);
     io.emit(SocketEvent.MOVE, moveResult);
-    const winner = this.playGame(io, moveResult.resultingNumber);
-    if (winner) {
-      io.emit(SocketEvent.RESULT, winner);
+    this.playGame(io, moveResult.resultingNumber);
+  }
+
+  public changePlayerGameMode(
+    updateMode: string,
+    socketId: string,
+    io: Server
+  ): void {
+    const player = this.game.getPlayerBySocketId(socketId);
+    if (player) {
+      player.updateGameMode(updateMode);
+
+      // Mode is changing from manual to automatic
+      if (updateMode === "automatic") {
+        const currentPlayer = this.game.getCurrentPlayer();
+        const move = this.game.getOtherPlayer().getNumber();
+        // This checks if it's your turn then run the move in automatic mode
+        if (currentPlayer.getSocketId() === socketId && move) {
+          this.playGame(io, move);
+        }
+      }
     }
   }
 

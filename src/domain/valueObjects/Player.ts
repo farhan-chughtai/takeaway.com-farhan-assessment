@@ -69,6 +69,13 @@ export class Player {
     };
   }
 
+  public updateGameMode(mode: string) {
+    if (mode != "automatic" && mode != "manual") {
+      throw new Error();
+    }
+    this.mode = mode;
+  }
+
   private isValidManualMove(givenNumber: number, moveValue: number) {
     return MOVES.includes(moveValue) && (givenNumber + moveValue) % 3 === 0;
   }
