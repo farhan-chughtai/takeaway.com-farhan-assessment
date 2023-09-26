@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { GameService } from "../domain/services/GameService";
 import { Player } from "../repositories/Player";
-import { Player as PlayerObj } from "../domain/valueObjects/Player";
+import { Player as PlayerObj } from "../domain/entities/Player";
 import { SocketEvent } from "../Enums/SocketEventEnums";
 
 class GameSocket {

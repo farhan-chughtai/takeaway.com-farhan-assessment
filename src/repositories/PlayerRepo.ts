@@ -1,4 +1,4 @@
-import { Player as PlayerObj } from "../domain/valueObjects/Player";
+import { Player as PlayerObj } from "../domain/entities/Player";
 import { Player } from "./Player";
 
 export class PlayerRepo implements Player {

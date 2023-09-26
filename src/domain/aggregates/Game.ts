@@ -1,5 +1,5 @@
 import { MoveDto } from "../dtos/MoveDto";
-import { Player } from "../valueObjects/Player";
+import { Player } from "../entities/Player";
 import { NotFoundError } from "./errors/NotFoundError";
 
 export class Game {

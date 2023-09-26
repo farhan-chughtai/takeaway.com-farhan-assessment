@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import defaultRoutes from "./routes";
 import http from "http";
-import { Player } from "./domain/valueObjects/Player";
+import { Player } from "./domain/entities/Player";
 import { GameService } from "./domain/services/GameService";
 import Websocket from "./websocket/websocket";
 import { PlayerRepo } from "./repositories/PlayerRepo";

@@ -1,4 +1,4 @@
-import { Player as PlayerObj } from "../domain/valueObjects/Player";
+import { Player as PlayerObj } from "../domain/entities/Player";
 
 export interface Player {
   add(player: PlayerObj): void;

@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { GameService } from "../../../domain/services/GameService";
-import { Player } from "../../../domain/valueObjects/Player";
+import { Player } from "../../../domain/entities/Player";
 import { Game } from "../../../domain/aggregates/Game";
 import { SocketEvent } from "../../../Enums/SocketEventEnums";
 

@@ -1,6 +1,6 @@
 import { Game } from "../aggregates/Game";
 import { MoveDto } from "../dtos/MoveDto";
-import { Player } from "../valueObjects/Player";
+import { Player } from "../entities/Player";
 import { Server, Socket } from "socket.io";
 import { SocketEvent } from "../../Enums/SocketEventEnums";
 export class GameService {

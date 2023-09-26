@@ -1,4 +1,4 @@
-import { Player } from "../../../domain/valueObjects/Player";
+import { Player } from "../../../domain/entities/Player";
 import { Game } from "../../../domain/aggregates/Game";
 import { MoveDto } from "../../../domain/dtos/MoveDto";
 
