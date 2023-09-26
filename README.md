@@ -2,6 +2,10 @@
 
 Welcome to the "Game of Three" project! This is a simple web-based multiplayer game built with Node.js and TypeScript. Players can enjoy an interactive gaming experience through a basic HTML interface.
 
+# Architecture Diagram
+
+Please find the architecture diagram in the root folder of the app.
+
 ## Getting Started
 
 To run the application, follow these steps:
@@ -53,6 +57,8 @@ npm test
 The project is built with the following technologies and methodologies:
 
 - Node.js: For server-side development.
+- Express App.
+- Socket.io: For communication between players through server.
 - TypeScript: For statically typed JavaScript.
 - Domain-Driven Development (DDD): A software development approach that focuses on the problem domain.
 - Test-Driven Development (TDD): Writing tests before implementing the code.
